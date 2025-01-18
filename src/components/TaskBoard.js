@@ -42,24 +42,28 @@ const TaskBoard = () => {
 
   const onDeleteTask = (taskId) => {
     if (window.confirm("Are you sure you want to delete this task?")) {
-      setTasks((prev) => prev.filter((task) => task.id !== taskId));
+      // Delete the task from the UI state
+      setTasks((prev) => {
+        const updatedTasks = prev.filter((task) => task.id !== taskId);
+        // Update localStorage with the new task list
+        localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+        return updatedTasks;
+      });
     }
   };
 
+  // Load tasks from localStorage on initial load
   useEffect(() => {
     const storedTasks = localStorage.getItem("tasks");
     if (storedTasks) {
       setTasks(JSON.parse(storedTasks));
-    } else {
-      setTasks([]);
     }
   }, []);
 
+  // Persist tasks in localStorage whenever they change
   useEffect(() => {
     if (tasks.length > 0) {
       localStorage.setItem("tasks", JSON.stringify(tasks));
-    } else {
-      localStorage.setItem("tasks", []);
     }
   }, [tasks]);
 
